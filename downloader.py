@@ -11,7 +11,7 @@ import pickle
 #############################################################
 AS_TO_DISCOVER = 10000
 #############################################################
-SAVE_FILE = 'bgp_data.pkl'
+SAVE_FILE = 'bgp_paths.pkl'
 
 
 
@@ -30,6 +30,7 @@ def get_bgp_data():
     bgp_data = set()
     counter = 0
     for rec in stream:
+        # TODO FIX: we are not counting the AS found but the links !!! 
         if  len(bgp_data) > 10000: break
         for elem in rec.record:
             if elem.type == "A":  # BGP Announcement
