@@ -7,6 +7,7 @@ import socket
 from tqdm import tqdm
 import pickle
 import time
+import plotly.graph_objects as go
 
 SAVE_FILE1 = 'bgp_paths.pkl'
 SAVE_FILE2 = 'asn_lookup.pkl'
@@ -77,6 +78,33 @@ def draw_bgp_graph(G):
     plt.title("BGP Peering Graph")
     plt.show()
 
+def create_country_graph(bgp_data, asn_lookup):
+    country_peers = set()
+    for asn1, asn2 in bgp_data:
+        try:
+            country1 = asn_lookup[asn1]
+            country2 = asn_lookup[asn2]
+            if country1 != country2:  # Exclude self-loops
+                country_peers.add((country1, country2))
+        except Exception as e:
+            print(f"Error processing pair ({asn1}, {asn2}): {e}")
+
+    # Creating a graph with countries
+    G = nx.Graph()
+    for country1, country2 in tqdm(country_peers):
+        G.add_edge(country1, country2)
+    return G
+
+
+# Drawing the country-level BGP graph
+def draw_country_graph(G):
+    pos = nx.spring_layout(G, k=0.9)  
+    plt.figure(figsize=(15, 10))
+    nx.draw(G, pos, with_labels=True, node_size=50, font_size=8, edge_color='gray', alpha=0.7)
+    plt.title("Country-level BGP Peering Graph")
+    plt.show()
+
+
 # Main
 with open(SAVE_FILE1, 'rb') as f:
     # loading links between AS
@@ -95,6 +123,11 @@ with open(SAVE_FILE1, 'rb') as f:
     #with open(SAVE_FILE2, 'wb') as f:
     #    pickle.dump(bgp_data, f)
     
-    G = create_bgp_graph(bgp_data, asn_lookup)
-    draw_bgp_graph(G)
-    asn_lookup.close()
+    G1 = create_bgp_graph(bgp_data, asn_lookup)
+    draw_bgp_graph(G1)
+    G2 = create_country_graph(bgp_data, asn_lookup)
+    draw_country_graph(G2)
+
+
+    
+
