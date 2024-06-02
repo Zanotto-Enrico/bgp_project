@@ -24,8 +24,8 @@ This project aims to analize the Border Gateway Protocol (BGP) peering relations
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/your-username/bgp-peering-graph.git
-   cd bgp-peering-graph
+   git clone https://github.com/Zanotto-Enrico/bgp_project
+   cd bgp_project
     ```
 
 2. **Install the required libraries:**
