@@ -1,0 +1,3 @@
+between centrality per vedere se è in mezzo a delle comunicazioni
+
+pesare i BGP per i prefissi

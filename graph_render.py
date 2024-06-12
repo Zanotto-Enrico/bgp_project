@@ -1,5 +1,4 @@
 import os
-import pybgpstream
 import networkx as nx
 import matplotlib.pyplot as plt
 import pycountry

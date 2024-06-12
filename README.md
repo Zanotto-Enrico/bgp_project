@@ -74,3 +74,4 @@ This project aims to analize the Border Gateway Protocol (BGP) peering relations
 Example
 The resulting graph provides a visual representation of the BGP peering relationships between AS. Each node represents an AS, and each edge represents a direct peering relationship. The nodes are colored based on their respective countries, allowing for a clear view of the international connectivity.
 
+centr
