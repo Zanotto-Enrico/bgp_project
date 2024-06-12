@@ -74,4 +74,15 @@ This project aims to analize the Border Gateway Protocol (BGP) peering relations
 Example
 The resulting graph provides a visual representation of the BGP peering relationships between AS. Each node represents an AS, and each edge represents a direct peering relationship. The nodes are colored based on their respective countries, allowing for a clear view of the international connectivity.
 
-centr
+## other things
+
+Global Internet Reachability. Prior research shows that certain countries exhibit hegemonic influence on global reachability [8], while many depend on Western countries to access common Internet destinations [10]. These instances not only jeopardize global reachability due to direct dependence on other countries and their Internet infrastructure [10], but also raise concerns about potential surveillance [22]–[24] and collateral damage [18].
+
+
+
+Threat Model. Given the graph G(V, E), communication between any two nodes s, d ∈ V could be censored, intercepted, blocked, or in any way tampered with, ultimately harming communication between nodes s and d. This can be done anywhere on the path between s and d, and caused by nodes on this path which are unreliable, potentially malicious, with interests of deteriorating communication between s and d, or simply not trusted. Given that our assessment is done at the level of ASes, we assume that the ASes as a whole pose this threat. 
+
+
+
+
+
