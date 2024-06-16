@@ -1,7 +1,8 @@
 geopandas==0.14.4
 matplotlib==3.8.4
 networkx==3.3
-plotly==5.22.0
-pybgpstream==2.0.2
+numpy==1.22.2
+pandas==1.4.3
 pycountry==24.6.1
+requests==2.27.1
 tqdm==4.62.3
