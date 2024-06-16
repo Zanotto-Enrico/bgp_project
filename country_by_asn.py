@@ -1,10 +1,27 @@
+import os
+import pickle
 import socket
 from tqdm import tqdm
 
+
+CACHE_FILE = "as_nationality_cache.pickle"
+
+def load_cache():
+    """Load cache from pickle file."""
+    if os.path.exists(CACHE_FILE):
+        with open(CACHE_FILE, "rb") as f:
+            return pickle.load(f)
+    return {}
+
+def save_cache(cache):
+    """Save cache to pickle file."""
+    with open(CACHE_FILE, "wb") as f:
+        pickle.dump(cache, f)
+
 def get_country_by_asn(asn_set):
-    results = {}
+    results = load_cache()
     chunk_size = 200
-    asn_list = list(asn_set)
+    asn_list = [n for n in asn_set if n not in results]
     print(f"looking up coutry codes for {len(asn_list)} asn...")
     for i in tqdm(range(0, len(asn_list), chunk_size)):
         try:
@@ -35,4 +52,5 @@ def get_country_by_asn(asn_set):
             for asn in asn_chunk:
                 results[asn] = 'Unknown'
 
+    save_cache(results)
     return results
