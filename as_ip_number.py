@@ -3,7 +3,7 @@ import pickle
 import requests
 from tqdm import tqdm
 
-file_path = "data/routeviews-rv2-20240613-0800.pfx2as"
+file_path = "data/2024/routeviews-rv2-20240613-0800.pfx2as"
 
 def get_as_ipv4_addresses(as_numbers):
     

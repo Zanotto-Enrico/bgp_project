@@ -49,7 +49,7 @@ def create_as_graph(as_rel_file):
 
     return G
 
-as_rel_file = './data/20160601.as-rel2.txt'
+as_rel_file = './data/2024/20240601.as-rel2.txt'
 
 def iso_a2_to_iso_a3(iso_a2_code):
     try:
