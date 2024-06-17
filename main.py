@@ -31,8 +31,11 @@ def create_as_graph(as_rel_file):
             if line.startswith('#'):
                 continue
             parts = line.strip().split('|')
-            if len(parts) == 4:
-                provider, customer, relation, protocol = parts
+            if len(parts) > 1 :
+                if len(parts) == 4: 
+                    provider, customer, relation, protocol = parts
+                if len(parts) == 3: 
+                    provider, customer, relation = parts
                 if relation == '-1':
                     G.add_edge(provider, customer, relation='p2c')
                 elif relation == '0':
@@ -49,7 +52,7 @@ def create_as_graph(as_rel_file):
 
     return G
 
-as_rel_file = './data/2024/20240601.as-rel2.txt'
+as_rel_file = './data/2012/20120601.as-rel.txt'
 
 def iso_a2_to_iso_a3(iso_a2_code):
     try:
