@@ -6,11 +6,12 @@ from tqdm import tqdm
 
 CACHE_FILE = "as_nationality_cache.pickle"
 
-def load_cache():
+def load_cache(asn_set):
     """Load cache from pickle file."""
     if os.path.exists(CACHE_FILE):
         with open(CACHE_FILE, "rb") as f:
-            return pickle.load(f)
+            return {k: v for k, v in pickle.load(f).items() if k in asn_set}
+
     return {}
 
 def save_cache(cache):
@@ -19,7 +20,7 @@ def save_cache(cache):
         pickle.dump(cache, f)
 
 def get_country_by_asn(asn_set):
-    results = load_cache()
+    results = load_cache(asn_set)
     chunk_size = 200
     asn_list = [n for n in asn_set if n not in results]
     print(f"looking up coutry codes for {len(asn_list)} asn...")
