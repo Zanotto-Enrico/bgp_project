@@ -3,9 +3,8 @@ import pickle
 import requests
 from tqdm import tqdm
 
-file_path = "data/2024/routeviews-rv2-20240613-0800.pfx2as"
 
-def get_as_ipv4_addresses(as_numbers):
+def get_as_ipv4_addresses(file_path,as_numbers):
     
     with open(file_path, 'r') as f:
         total_lines = sum(1 for _ in f)
