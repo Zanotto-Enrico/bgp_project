@@ -31,6 +31,43 @@ class GenerateGraphYear:
 
     def print_step(self,step):
         print(step)
+
+    def is_valid_path(self,path):
+        for i in range(len(path) - 1):
+            u, v = path[i], path[i + 1]
+            edge_data = self.G.get_edge_data(u, v)
+
+            if 'relation' in edge_data and edge_data['relation'] == 'p2c':
+                continue
+            elif i < len(path) - 2:
+                next_hop = path[i + 2]
+                next_edge_data = self.G.get_edge_data(v, next_hop)
+                if 'relation' not in next_edge_data or next_edge_data['relation'] != 'p2c':
+                    return False
+
+        return True
+
+    def find_all_valid_shortest_paths(self, source):
+        valid_paths = {}
+        queue = [[source]]
+        visited = {source}
+
+        while queue:
+            path = queue.pop(0)
+            current_node = path[-1]
+
+            for neighbor in self.G.neighbors(current_node):
+                if neighbor not in visited:
+                    new_path = path + [neighbor]
+
+                    if self.is_valid_path(new_path):
+                        if neighbor not in valid_paths or len(new_path) < len(valid_paths[neighbor]):
+                            valid_paths[neighbor] = new_path
+                        
+                        queue.append(new_path)
+                        visited.add(neighbor)
+        return valid_paths
+    
     def initialize_graph(self):
         a = set()
         
@@ -61,6 +98,7 @@ class GenerateGraphYear:
         for asn in a:
             self.G.nodes[asn]['ip_count'] = as_ip_counts[asn]
         self.print_step("Generated The AS relational graph of year {0}...".format(self.year))
+
     
     def calculate_centrality(self):
 
