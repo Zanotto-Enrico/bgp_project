@@ -9,9 +9,9 @@ parser = argparse.ArgumentParser(description='Process the year value.')
 
     # Add the arguments
 parser.add_argument('year', type=int, help='The year value')
-args = parser.parse_args()
-year = args.year
-# year=2024
+# args = parser.parse_args()
+# year = args.year
+year=2024
 def print_step(step):
     print(step)
 

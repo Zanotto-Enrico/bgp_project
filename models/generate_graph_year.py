@@ -99,6 +99,17 @@ class GenerateGraphYear:
             self.G.nodes[asn]['ip_count'] = as_ip_counts[asn]
         self.print_step("Generated The AS relational graph of year {0}...".format(self.year))
 
+        # Test valid path
+        # source = random.choice(list(a))
+        # valid_paths = self.find_all_valid_shortest_paths(source)
+
+        # rand_path = random.choice(list(valid_paths.values()))
+        # print(rand_path)
+
+        # for i in range(len(rand_path) - 1):
+        #    u, v = rand_path[i], rand_path[i + 1]
+        #    edge_data = self.G.get_edge_data(u, v)
+        #    print(f"{u} -> {v} : {edge_data['relation']}")
     
     def calculate_centrality(self):
 
@@ -110,7 +121,8 @@ class GenerateGraphYear:
         sampled_nodes = random.sample(list(self.G.nodes()), sample_size)
 
         for source in tqdm(sampled_nodes,desc="Calculating centrality of each AS... "):
-            shortest_paths = nx.single_source_shortest_path(self.G, source)
+            # shortest_paths = nx.single_source_shortest_path(self.G, source)
+            shortest_paths = self.find_all_valid_shortest_paths(source)
             source_ip_count = self.G.nodes[source]['ip_count']
             for target, path in shortest_paths.items():
                 if source != target:
