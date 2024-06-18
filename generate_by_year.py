@@ -51,8 +51,7 @@ for i in range(len(countries)):
     for iyear in years:
             usedata={}
             usedata=datas[iyear]
-            ccp_values=[]
-            ccp.append(ccp_values)
+            ccp.append(usedata['ccp'][i])
             crp.append(usedata['crp'][i])
             grp.append(usedata['grp'][i])
 
@@ -63,6 +62,40 @@ for i in range(len(countries)):
 data = data_country
 
 print_step("Divided for each country - Done.")
+
+
+print_step("Plotting CCP...")
+for z in range(len(countries)):
+    plt.figure(figsize=(10, 8))
+    target=data[z]['ccp']
+    targettops=len(target)-1
+    top_ccp = target[targettops][:10]
+    as_names = [get_as_name(x[0])[:45] for x in top_ccp]
+    ccp_values = [x[1] for x in top_ccp]
+
+    for i in range(len(top_ccp)):
+        values=[]
+        for y in range(len(years)):
+            for x in data[z]['ccp'][y]:
+                if x[0] == top_ccp[i][0]:
+                    values.append(x[1])
+            if len(values) < y+1:
+                values.append(0)
+        plt.plot(years, values, label=as_names[i])
+    plt.xlabel('Years')
+    plt.xticks(years)
+    plt.ylabel('CCP Values')
+    plt.title('CCP of {0} though years'.format(countries[z]))
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig('results/ccp_years_{0}.png'.format(countries[z]))
+
+
+print_step("Generated plot of CCP for italy - Done.")
+
+
+
+
 print_step("Plotting CRP...")
 
 plt.figure(figsize=(10, 8))
