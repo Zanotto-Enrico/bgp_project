@@ -3,19 +3,19 @@ from matplotlib import pyplot as plt
 import networkx as nx
 import numpy as np
 import pycountry
-from country_by_asn import *
+from models.country_by_asn import *
 import pandas as pd
 import geopandas as gpd
-from as_ip_number import *
-from as_name import *
+from models.as_ip_number import *
+from models.as_name import *
 import random
 
 
 MAX_AS = 100000
-PERCENT_OF_AS_TO_USE_BTWENNESS = 0.001
-PERCENT_OF_AS_TO_USE_GRP = 0.01
-PERCENT_OF_AS_TO_USE_CRP = 0.01
-CHOKING_AS_TO_REMOVE = 5
+PERCENT_OF_AS_TO_USE_BTWENNESS = 0.01
+PERCENT_OF_AS_TO_USE_GRP = 0.1
+PERCENT_OF_AS_TO_USE_CRP = 0.1
+CHOKING_AS_TO_REMOVE = 20
 
 class GenerateGraphYear:
 

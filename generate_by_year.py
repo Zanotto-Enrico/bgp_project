@@ -1,5 +1,5 @@
 import argparse
-from as_name import get_as_name
+from models.as_name import get_as_name
 from models.generate_graph_year import GenerateGraphYear
 from matplotlib import pyplot as plt
 import csv
@@ -124,8 +124,7 @@ for i in range(len(countries)):
     
     values=[]
     for y in range(len(years)):
-        lunghezza=len(data[i]['grp'][y]) 
-        values.append(data[i]['grp'][y][lunghezza-1])
+        values.append(data[i]['grp'][y][4])
     plt.plot(years, values, label=countries[i])
 
 plt.xlabel('Years')
