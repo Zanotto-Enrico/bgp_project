@@ -91,7 +91,7 @@ for z in range(len(countries)):
     plt.savefig('results/ccp_years_{0}.png'.format(countries[z]))
 
 
-print_step("Generated plot of CCP for italy - Done.")
+    print_step("Generated plot of CCP for {0} - Done.".format(countries[z]))
 
 
 
