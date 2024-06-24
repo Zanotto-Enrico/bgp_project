@@ -186,14 +186,14 @@ class GenerateGraphYear:
             outflow_paths_count = len(outflow_paths)
 
 
-            # founding the country's AS with the biggest choking potential
+            # finding the country's AS with the biggest choking potential
             ccp_values = []
             for as_id in border_as:
-                choke_paths_count = sum(1 for path in outflow_paths if as_id in path)
-                if outflow_paths_count == 0:
+                choke_paths_count = sum(1 for path in internal_paths if as_id in path)
+                if internal_paths_count == 0:
                     ccp_values.append((as_id, 0))
                 else:
-                    ccp_values.append((as_id, choke_paths_count / outflow_paths_count))
+                    ccp_values.append((as_id, choke_paths_count / internal_paths_count))
             
             ccp_values = sorted(ccp_values, key=lambda x: x[1], reverse=True)
 
@@ -201,7 +201,7 @@ class GenerateGraphYear:
             self.print_step("Generated CCP of year {0}...".format(self.year))
 
 
-            # founding the country's border AS with the biggest choking potential
+            # finding the country's border AS with the biggest choking potential
             ccp_values_border = []
             for as_id in border_as:
                 choke_paths_count = sum(1 for path in outflow_paths if as_id in path)

@@ -149,11 +149,25 @@ for country in countries:
     
     plt.figure(figsize=(8, 6))
     plt.barh(as_names, ccp_values, color='purple')
-    plt.xlabel('Cumulative Choke Potential')
+    plt.xlabel('Choke Potential')
     plt.ylabel('AS')
     plt.title(f'Top {len(top_ccp)} Choking Border ASes in {country}')
     plt.tight_layout()
     plt.savefig('results/{0}/ccp_{1}.png'.format(year, country))
+
+    # Calculate cumulative CCP values for the top 10
+    cumulative_ccp = [sum(ccp_values[:i+1]) for i in range(len(ccp_values))]
+
+    # Plot the cumulative CCP line chart with area filled
+    plt.figure(figsize=(8, 6))
+    plt.plot([str(s)for s in top_ccp], cumulative_ccp, label='Cumulative CCP', color='blue')
+    plt.fill_between([str(s)for s in top_ccp], cumulative_ccp, color='blue', alpha=0.2)
+    plt.xlabel('AS')
+    plt.ylabel('Cumulative Choke Potential')
+    plt.title(f'Cumulative Choking Potential in {country}')
+    plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
+    plt.savefig('results/{0}/cumulative_ccp_{1}.png'.format(year, country))
 
 print_step("Plotting CRP...")
 
