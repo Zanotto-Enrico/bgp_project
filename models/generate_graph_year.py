@@ -12,9 +12,9 @@ import random
 
 
 MAX_AS = 100000
-PERCENT_OF_AS_TO_USE_BTWENNESS = 0.01
-PERCENT_OF_AS_TO_USE_GRP = 0.1
-PERCENT_OF_AS_TO_USE_CRP = 0.1
+PERCENT_OF_AS_TO_USE_BTWENNESS = 1
+PERCENT_OF_AS_TO_USE_GRP = 0.9
+PERCENT_OF_AS_TO_USE_CRP = 0.9
 CHOKING_AS_TO_REMOVE = 20
 
 class GenerateGraphYear:
@@ -113,6 +113,7 @@ class GenerateGraphYear:
     
     def calculate_centrality(self):
 
+
         betweenness_centrality = {node: 0 for node in self.G.nodes()}
         load_centrality = {node: 0 for node in self.G.nodes()}
         
@@ -149,51 +150,75 @@ class GenerateGraphYear:
     def calculate_country(self):
         self.as_to_country = get_country_by_asn(self.betweenness_centrality.keys())
 
+
+
+    def find_internal_paths(self, country, country_as):
+        
+        # Find all internal paths (for crp)
+        internal_paths = []
+        for as_id in tqdm(country_as, desc=f"Calculating CRP of {country}"):
+            for target in country_as:
+                try:
+                    path = nx.shortest_path(self.G, source=as_id, target=target)
+                    internal_paths.append(path)
+                except nx.NetworkXNoPath:
+                    continue
+
+        return internal_paths
+    
+    def find_outflow_paths(self, country, country_as, sampled_foreign_nodes):
+
+        # Find all outflow paths of the country (for grp)
+        outflow_paths = []
+        for as_id in tqdm(country_as, desc=f"Calculating GRP of {country}"):
+            for target in sampled_foreign_nodes:
+                try:
+                    path = nx.shortest_path(self.G, source=as_id, target=target)
+                    outflow_paths.append(path)
+                except nx.NetworkXNoPath:
+                    continue
+
+        return outflow_paths
+            
+
+
     def calculate_ccp_crp_grp(self, countries):
         self.print_step("Generating ccp_crp_grp of year {0}...".format(self.year))
         for country in countries:
             country_as = [as_id for as_id, c in self.as_to_country.items() if c == country]
             border_as = [as_id for as_id in country_as if any(neighbor not in country_as for neighbor in self.G.neighbors(as_id))]
             foreign_as = [as_id for as_id, c in self.as_to_country.items() if c != country]
-            
+
             sample_size = int(len(self.G.nodes()) * PERCENT_OF_AS_TO_USE_GRP)
             sampled_foreign_nodes = random.sample(foreign_as, sample_size)
             sample_size_country=int(len(country_as) * PERCENT_OF_AS_TO_USE_CRP)
             country_as=random.sample(country_as, sample_size_country)
 
-            # Find all internal paths (for crp)
-            internal_paths = []
-            for as_id in tqdm(country_as, desc=f"Calculating CRP of {country}"):
-                for target in country_as:
-                    try:
-                        path = nx.shortest_path(self.G, source=as_id, target=target)
-                        internal_paths.append(path)
-                    except nx.NetworkXNoPath:
-                        continue
-            
-            internal_paths_count = len(internal_paths)
 
-            # Find all outflow paths of the country (for grp)
-            outflow_paths = []
-            for as_id in tqdm(country_as, desc=f"Calculating GRP of {country}"):
-                for target in sampled_foreign_nodes:
-                    try:
-                        path = nx.shortest_path(self.G, source=as_id, target=target)
-                        outflow_paths.append(path)
-                    except nx.NetworkXNoPath:
-                        continue
+            internal_paths = self.find_internal_paths( country, country_as)
+            original_internal_paths = internal_paths.copy()
+            internal_paths_count = len(internal_paths)
             
+            outflow_paths = self.find_outflow_paths(country, country_as, sampled_foreign_nodes)
+            original_outflow_paths = outflow_paths.copy()
             outflow_paths_count = len(outflow_paths)
 
+            original_country_as = country_as.copy()
 
             # finding the country's AS with the biggest choking potential
             ccp_values = []
-            for as_id in border_as:
+            
+            for as_id in tqdm(country_as.copy(), desc=f"Calculating internal CRP of {country}"):
                 choke_paths_count = sum(1 for path in internal_paths if as_id in path)
                 if internal_paths_count == 0:
                     ccp_values.append((as_id, 0))
                 else:
                     ccp_values.append((as_id, choke_paths_count / internal_paths_count))
+
+                country_as.remove(as_id)
+                internal_paths = self.find_internal_paths(country, country_as)
+                internal_paths_count = len(internal_paths)
+                
             
             ccp_values = sorted(ccp_values, key=lambda x: x[1], reverse=True)
 
@@ -202,16 +227,27 @@ class GenerateGraphYear:
 
 
             # finding the country's border AS with the biggest choking potential
+            country_as = original_country_as.copy()
             ccp_values_border = []
-            for as_id in border_as:
+            for as_id in tqdm(border_as, desc=f"Calculating outbound CRP of {country}"):
                 choke_paths_count = sum(1 for path in outflow_paths if as_id in path)
                 if outflow_paths_count == 0:
                     ccp_values_border.append((as_id, 0))
                 else:
                     ccp_values_border.append((as_id, choke_paths_count / outflow_paths_count))
+
+                country_as.remove(as_id)
+                outflow_paths = self.find_outflow_paths(country, country_as, sampled_foreign_nodes)
+                outflow_paths_count = len(outflow_paths)
             
             ccp_values_border = sorted(ccp_values_border, key=lambda x: x[1], reverse=True)
             
+
+            
+            internal_paths = original_internal_paths
+            internal_paths_count = len(internal_paths)
+            outflow_paths = original_outflow_paths
+            outflow_paths_count = len(outflow_paths)
 
             # calculating the Censorship Resilience Potential removing the AS in the country with the biggest CCP
             for i in range(min(len(ccp_values), CHOKING_AS_TO_REMOVE)):
